@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+body {
+  background: #f7f7f8;
+  color: #191c20;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Revolut-style card */
+.glass-card {
+  background: #ffffff;
+  border: 1px solid #ebebef;
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.glass-card-hover {
+  transition: all 0.25s ease;
+}
+.glass-card-hover:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Bold gradient text for accents */
+.gradient-text {
+  background: linear-gradient(135deg, #0066ff, #6c3bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-phase1 {
+  color: #0066ff;
+  background: none;
+  -webkit-text-fill-color: #0066ff;
+}
+
+.gradient-text-phase2 {
+  color: #6c3bff;
+  background: none;
+  -webkit-text-fill-color: #6c3bff;
+}
+
+.gradient-text-phase3 {
+  color: #00a67e;
+  background: none;
+  -webkit-text-fill-color: #00a67e;
+}
