@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, BookOpen, Lightbulb, Globe, Diamond, DollarSign, BarChart3, Layout, ClipboardList, LogOut } from 'lucide-react';
+import { Home, BookOpen, Lightbulb, Globe, Diamond, DollarSign, BarChart3, Layout, ClipboardList, LogOut, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useProgress } from '../context/ProgressContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,12 +7,14 @@ import { useGame, ACHIEVEMENTS } from '../context/GameContext';
 import { phases } from '../data/roadmap';
 
 const phaseColors = {
-  1: { active: 'border-blue-600 text-blue-600', text: 'text-blue-600' },
-  2: { active: 'border-violet-600 text-violet-600', text: 'text-violet-600' },
-  3: { active: 'border-emerald-600 text-emerald-600', text: 'text-emerald-600' },
+  1: { text: '#60a5fa', dot: '#2563eb' },
+  2: { text: '#a78bfa', dot: '#7c3aed' },
+  3: { text: '#34d399', dot: '#059669' },
 };
 
 const gateWeeks = [2, 4, 8, 12];
+
+const DAILY_GOAL = 5;
 
 function NavItem({ to, icon: Icon, label, end = false }) {
   return (
@@ -20,14 +22,14 @@ function NavItem({ to, icon: Icon, label, end = false }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all duration-200 ${
+        `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
           isActive
-            ? 'bg-gray-900 text-white font-medium'
-            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            ? 'bg-white/10 text-white'
+            : 'text-white/50 hover:text-white/90 hover:bg-white/5'
         }`
       }
     >
-      <Icon size={16} />
+      <Icon size={15} strokeWidth={2} />
       <span>{label}</span>
     </NavLink>
   );
@@ -37,6 +39,7 @@ function WeekLink({ weekId, phaseId }) {
   const { getWeekProgress } = useProgress();
   const { done, total } = getWeekProgress(weekId);
   const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+  const color = phaseColors[phaseId];
 
   return (
     <NavLink
@@ -44,29 +47,19 @@ function WeekLink({ weekId, phaseId }) {
       className={({ isActive }) =>
         `flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition-all duration-200 ml-2 ${
           isActive
-            ? 'bg-gray-100 text-gray-900 font-medium'
-            : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+            ? 'bg-white/10 text-white font-medium'
+            : 'text-white/40 hover:text-white/80 hover:bg-white/5'
         }`
       }
     >
       <span>Неделя {weekId}</span>
       {percent > 0 && (
-        <span className={`text-xs font-medium ${percent === 100 ? 'text-emerald-600' : 'text-gray-400'}`}>
+        <span className="text-xs font-semibold" style={{ color: percent === 100 ? color.text : 'rgba(255,255,255,0.3)' }}>
           {done}/{total}
         </span>
       )}
     </NavLink>
   );
-}
-
-const DAILY_GOAL = 5; // tasks per day
-
-function getMascot(streak, progress) {
-  if (progress === 100) return { emoji: '🦁', mood: 'Ты лев! Всё выполнено!' };
-  if (streak >= 7) return { emoji: '🔥', mood: 'Огненная серия!' };
-  if (streak >= 3) return { emoji: '⚡', mood: 'В ударе!' };
-  if (progress >= 50) return { emoji: '💪', mood: 'Хорошая работа!' };
-  return { emoji: '🚀', mood: 'Вперёд, основатель!' };
 }
 
 function DailyGoal() {
@@ -76,20 +69,19 @@ function DailyGoal() {
   const done = doneToday >= DAILY_GOAL;
 
   return (
-    <div className="mx-3 mb-3 p-3 rounded-2xl border"
-      style={{ background: done ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)' : 'linear-gradient(135deg, #fef9c3, #fef08a)', borderColor: done ? '#6ee7b7' : '#fde047' }}>
+    <div className="mx-3 mb-2 px-3 py-2.5 rounded-xl" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
       <div className="flex items-center justify-between mb-1.5">
-        <div className="text-xs font-bold" style={{ color: done ? '#065f46' : '#854d0e' }}>
-          {done ? '✅ Дневная цель!' : '🎯 Цель на сегодня'}
-        </div>
-        <div className="text-xs font-bold" style={{ color: done ? '#065f46' : '#854d0e' }}>
+        <span className="text-xs font-semibold text-white/40 uppercase tracking-wider">
+          {done ? '✅ Цель дня' : '🎯 Цель дня'}
+        </span>
+        <span className="text-xs font-bold" style={{ color: done ? '#34d399' : '#fbbf24' }}>
           {Math.min(doneToday, DAILY_GOAL)}/{DAILY_GOAL}
-        </div>
+        </span>
       </div>
-      <div className="h-2 rounded-full overflow-hidden" style={{ background: done ? '#6ee7b7' : '#fde68a' }}>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
         <motion.div
           className="h-full rounded-full"
-          style={{ background: done ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #f59e0b, #d97706)' }}
+          style={{ background: done ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f59e0b, #fbbf24)' }}
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -97,6 +89,14 @@ function DailyGoal() {
       </div>
     </div>
   );
+}
+
+function getMascot(streak, percent) {
+  if (percent === 100) return { emoji: '🦁', mood: 'Всё выполнено!' };
+  if (streak >= 7) return { emoji: '🔥', mood: 'Огненная серия!' };
+  if (streak >= 3) return { emoji: '⚡', mood: 'В ударе!' };
+  if (percent >= 50) return { emoji: '💪', mood: 'Хорошая работа!' };
+  return { emoji: '🚀', mood: 'Вперёд!' };
 }
 
 function XPBar() {
@@ -108,78 +108,70 @@ function XPBar() {
   const mascot = getMascot(streak.current, percent);
 
   return (
-    <div className="mx-3 mb-3 p-3 rounded-2xl bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100">
-      {/* Mascot + level row */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+    <div className="mx-3 mb-2 p-3 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(37,99,235,0.3), rgba(124,58,237,0.3))', border: '1px solid rgba(255,255,255,0.1)' }}>
+      {/* Mascot + level */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
           <motion.div
-            animate={{ rotate: [0, -10, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-xl"
-            style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
+            animate={{ rotate: [0, -8, 8, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 4 }}
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }}
           >
             {mascot.emoji}
           </motion.div>
           <div>
-            <div className="text-xs font-bold text-gray-800">{current.name}</div>
-            <div className="text-xs text-gray-400">{mascot.mood}</div>
+            <div className="text-sm font-bold text-white leading-tight">{current.name}</div>
+            <div className="text-xs text-white/40">{mascot.mood}</div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="flex items-center gap-1 bg-orange-100 px-2 py-1 rounded-lg mb-0.5">
-            <span className="text-sm">🔥</span>
-            <span className="text-xs font-bold text-orange-700">{streak.current} дн.</span>
+        <div className="text-right flex-shrink-0">
+          <div className="flex items-center gap-1 justify-end mb-0.5">
+            <span className="text-base">🔥</span>
+            <span className="text-sm font-bold text-orange-300">{streak.current}</span>
           </div>
-          <div className="text-xs text-gray-400 text-center">{totalXP} XP</div>
+          <div className="text-xs text-white/30">{totalXP} XP</div>
         </div>
       </div>
 
-      {/* Level badge */}
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black text-white flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}>
+      {/* Level number + XP bar */}
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black text-white flex-shrink-0"
+          style={{ background: 'rgba(255,255,255,0.15)' }}>
           {current.level}
         </div>
-        <div className="flex-1">
-          {next && (
+        <div className="flex-1 min-w-0">
+          {next ? (
             <>
-              <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>до «{next.name}»</span>
-                <span>{xpInLevel}/{xpToNext} XP</span>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-white/30 truncate">→ {next.name}</span>
+                <span className="text-white/40 flex-shrink-0 ml-1">{xpInLevel}/{xpToNext}</span>
               </div>
-              <div className="h-2.5 bg-white rounded-full overflow-hidden border border-blue-100 relative">
+              <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 <motion.div
-                  className="h-full rounded-full"
+                  className="h-full rounded-full relative"
                   style={{ background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)' }}
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                />
-                {/* Shine */}
-                <div className="absolute inset-0 rounded-full"
-                  style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)' }} />
+                  transition={{ duration: 0.7, ease: 'easeOut' }}
+                >
+                  <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%)' }} />
+                </motion.div>
               </div>
             </>
-          )}
-          {!next && (
-            <div className="text-xs font-bold text-purple-600">🏆 Максимальный уровень!</div>
+          ) : (
+            <div className="text-xs font-bold text-yellow-300">🏆 Макс. уровень!</div>
           )}
         </div>
       </div>
 
-      {/* Achievements mini-row */}
+      {/* Achievements */}
       {unlockedCount > 0 && (
-        <div className="flex flex-wrap gap-1 pt-1 border-t border-blue-100">
-          {ACHIEVEMENTS.filter(a => unlockedAchievements[a.id]).slice(0, 6).map(a => (
-            <motion.span
-              key={a.id}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              title={a.title}
-              className="text-sm cursor-default"
-            >{a.emoji}</motion.span>
+        <div className="flex flex-wrap gap-1 mt-2 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          {ACHIEVEMENTS.filter(a => unlockedAchievements[a.id]).slice(0, 7).map(a => (
+            <motion.span key={a.id} initial={{ scale: 0 }} animate={{ scale: 1 }} title={a.title} className="text-sm cursor-default">{a.emoji}</motion.span>
           ))}
-          {unlockedCount > 6 && <span className="text-xs text-gray-400 self-center">+{unlockedCount - 6}</span>}
+          {unlockedCount > 7 && <span className="text-xs text-white/30 self-center">+{unlockedCount - 7}</span>}
         </div>
       )}
     </div>
@@ -189,25 +181,29 @@ function XPBar() {
 export default function Sidebar() {
   const { logout } = useAuth();
   return (
-    <nav className="flex flex-col gap-1 p-5 h-full overflow-y-auto">
-      <div className="mb-4">
-        <h2 className="text-xl font-black text-gray-900 px-3 tracking-tight">ROADMAP</h2>
-        <p className="text-xs text-gray-400 px-3 mt-0.5">12 недель до 50 юзеров</p>
+    <nav className="flex flex-col gap-0.5 p-4 h-full overflow-y-auto" style={{ background: 'linear-gradient(180deg, #0f1117 0%, #141520 100%)' }}>
+      {/* Logo */}
+      <div className="mb-4 px-3 pt-1">
+        <h2 className="text-lg font-black text-white tracking-tight">СТАРТАП</h2>
+        <p className="text-xs text-white/30 mt-0.5">12 недель · 50 юзеров</p>
       </div>
 
       <XPBar />
       <DailyGoal />
 
+      <div className="my-2" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+
       <NavItem to="/" icon={Home} label="Главная" end />
+      <NavItem to="/achievements" icon={Trophy} label="Достижения" />
       <NavItem to="/how-to-use" icon={BookOpen} label="Как работать" />
       <NavItem to="/principles" icon={Lightbulb} label="Принципы" />
-      <NavItem to="/russian-specifics" icon={Globe} label="Российская специфика" />
+      <NavItem to="/russian-specifics" icon={Globe} label="РФ-специфика" />
 
-      <div className="h-px bg-gray-100 my-3" />
+      <div className="my-2" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
 
       {phases.map((phase) => (
-        <div key={phase.id} className="mb-2">
-          <div className={`px-3 py-1 text-xs font-bold uppercase tracking-wider ${phaseColors[phase.id].text}`}>
+        <div key={phase.id} className="mb-1">
+          <div className="px-3 py-1 text-xs font-bold uppercase tracking-widest" style={{ color: phaseColors[phase.id].text }}>
             Фаза {phase.id}
           </div>
           {phase.weeks.map((wId) => (
@@ -218,11 +214,11 @@ export default function Sidebar() {
                   to={`/gate/${wId}`}
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-3 py-1 ml-4 rounded text-xs transition-all ${
-                      isActive ? 'text-amber-600 font-medium' : 'text-gray-400 hover:text-amber-600'
+                      isActive ? 'text-amber-300 font-medium' : 'text-white/25 hover:text-amber-300'
                     }`
                   }
                 >
-                  <Diamond size={10} />
+                  <Diamond size={9} />
                   <span>Gate-проверка</span>
                 </NavLink>
               )}
@@ -231,7 +227,7 @@ export default function Sidebar() {
         </div>
       ))}
 
-      <div className="h-px bg-gray-100 my-3" />
+      <div className="my-2" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
 
       <NavItem to="/budget" icon={DollarSign} label="Бюджет" />
       <NavItem to="/funnel" icon={BarChart3} label="Воронка" />
@@ -239,12 +235,12 @@ export default function Sidebar() {
       <NavItem to="/summary" icon={ClipboardList} label="Сводка" />
 
       <div className="mt-auto pt-4">
-        <div className="h-px bg-gray-100 mb-3" />
+        <div className="my-2" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
         <button
           onClick={logout}
-          className="flex items-center gap-3 w-full px-3 py-2 rounded-xl text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-xl text-sm text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200"
         >
-          <LogOut size={16} />
+          <LogOut size={15} />
           <span>Выйти</span>
         </button>
       </div>

@@ -13,6 +13,7 @@ import BudgetPage from './pages/BudgetPage';
 import FunnelPage from './pages/FunnelPage';
 import OverviewPage from './pages/OverviewPage';
 import SummaryPage from './pages/SummaryPage';
+import AchievementsPage from './pages/AchievementsPage';
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="funnel" element={<FunnelPage />} />
               <Route path="overview" element={<OverviewPage />} />
               <Route path="summary" element={<SummaryPage />} />
+              <Route path="achievements" element={<AchievementsPage />} />
             </Route>
           </Routes>
         </ProtectedRoute>

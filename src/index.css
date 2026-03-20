@@ -4,58 +4,108 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #e5e7eb transparent;
+  scrollbar-color: #d1d5db transparent;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
 body {
-  background: #f7f7f8;
-  color: #191c20;
+  background: #f4f4f7;
+  color: #111318;
   font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Revolut-style card */
+/* Premium card — глубокие тени как у Tinkoff */
 .glass-card {
   background: #ffffff;
-  border: 1px solid #ebebef;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.06);
 }
 
 .glass-card-hover {
-  transition: all 0.25s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
 }
 .glass-card-hover:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 12px 40px rgba(0,0,0,0.08);
+  transform: translateY(-3px);
 }
 
-/* Bold gradient text for accents */
+/* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #0066ff, #6c3bff);
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-phase1 {
-  color: #0066ff;
+  color: #2563eb;
   background: none;
-  -webkit-text-fill-color: #0066ff;
+  -webkit-text-fill-color: #2563eb;
 }
 
 .gradient-text-phase2 {
-  color: #6c3bff;
+  color: #7c3aed;
   background: none;
-  -webkit-text-fill-color: #6c3bff;
+  -webkit-text-fill-color: #7c3aed;
 }
 
 .gradient-text-phase3 {
-  color: #00a67e;
+  color: #059669;
   background: none;
-  -webkit-text-fill-color: #00a67e;
+  -webkit-text-fill-color: #059669;
+}
+
+/* Section label — как у Yandex */
+.section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9ca3af;
+}
+
+/* Stat number — крупные цифры */
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* Content card with left accent border */
+.accent-card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.45);
+}
+.btn-primary:active {
+  transform: translateY(0);
 }
