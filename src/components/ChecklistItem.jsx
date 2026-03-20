@@ -1,13 +1,46 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Link2, FileText, PenLine } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { useProgress } from '../context/ProgressContext';
+import { useGame } from '../context/GameContext';
 import TaskDetailPanel, { StatusBadge } from './TaskDetailPanel';
 
+function fireConfetti(e) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = (rect.left + rect.width / 2) / window.innerWidth;
+  const y = (rect.top + rect.height / 2) / window.innerHeight;
+  confetti({
+    particleCount: 45,
+    spread: 60,
+    origin: { x, y },
+    colors: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'],
+    scalar: 0.85,
+    ticks: 90,
+    gravity: 0.9,
+  });
+}
+
 export default function ChecklistItem({ id, text, index = 0 }) {
-  const { isChecked, toggleTask, getTaskDetail } = useProgress();
+  const { isChecked, toggleTask, getTaskDetail, getOverallProgress } = useProgress();
+  const { addXP } = useGame();
   const checked = isChecked(id);
   const [expanded, setExpanded] = useState(false);
+  const [justChecked, setJustChecked] = useState(false);
+
+  const handleToggle = (e) => {
+    const wasChecked = checked;
+    toggleTask(id);
+    const { done } = getOverallProgress();
+    const newDone = wasChecked ? done - 1 : done + 1;
+    addXP(wasChecked ? -10 : 10, newDone);
+
+    if (!wasChecked) {
+      fireConfetti(e);
+      setJustChecked(true);
+      setTimeout(() => setJustChecked(false), 600);
+    }
+  };
 
   const detail = getTaskDetail(id);
   const hasData = detail.notes || detail.links?.length > 0 || detail.status !== 'todo';
@@ -17,12 +50,15 @@ export default function ChecklistItem({ id, text, index = 0 }) {
     <div className="border-b border-gray-100 last:border-0">
       <div className="flex items-start gap-3 py-2.5">
         {/* Checkbox */}
-        <button
-          onClick={() => toggleTask(id)}
+        <motion.button
+          onClick={handleToggle}
+          animate={justChecked ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+          transition={{ duration: 0.3 }}
           className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 cursor-pointer"
           style={{
             borderColor: checked ? '#0066ff' : '#d1d5db',
             background: checked ? '#0066ff' : 'transparent',
+            boxShadow: justChecked ? '0 0 0 4px rgba(59,130,246,0.2)' : 'none',
           }}
         >
           <motion.svg
@@ -39,15 +75,18 @@ export default function ChecklistItem({ id, text, index = 0 }) {
               transition={{ duration: 0.25 }}
             />
           </motion.svg>
-        </button>
+        </motion.button>
 
         {/* Text */}
         <div className="flex-1 min-w-0 space-y-1">
-          <span className={`text-sm leading-relaxed transition-all duration-200 ${
-            checked ? 'text-gray-400 line-through' : 'text-gray-700'
-          }`}>
+          <motion.span
+            animate={checked ? { opacity: 0.45 } : { opacity: 1 }}
+            className={`text-sm leading-relaxed transition-colors duration-200 block ${
+              checked ? 'line-through text-gray-400' : 'text-gray-700'
+            }`}
+          >
             {text}
-          </span>
+          </motion.span>
 
           {/* Inline badges when data exists */}
           {hasData && (

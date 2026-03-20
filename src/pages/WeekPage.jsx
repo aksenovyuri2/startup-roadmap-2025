@@ -1,12 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Clock, Target, AlertTriangle, Diamond, Info, Sparkles } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import PageTransition from '../components/PageTransition';
 import GlassCard from '../components/GlassCard';
 import ProgressBar from '../components/ProgressBar';
 import ChecklistItem from '../components/ChecklistItem';
 import DataTable from '../components/DataTable';
 import { useProgress } from '../context/ProgressContext';
+import { useGame } from '../context/GameContext';
 import { weeks, phases } from '../data/roadmap';
 
 const phaseColors = {
@@ -22,6 +25,21 @@ export default function WeekPage() {
   const id = Number(weekId);
   const week = weeks[id];
   const { getWeekProgress } = useProgress();
+  const { unlockAchievement } = useGame();
+  const confettiFired = useRef(false);
+
+  const progress = getWeekProgress(id);
+
+  useEffect(() => {
+    if (progress.total > 0 && progress.done === progress.total && !confettiFired.current) {
+      confettiFired.current = true;
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      unlockAchievement('week_done');
+    }
+    if (progress.done < progress.total) {
+      confettiFired.current = false;
+    }
+  }, [progress.done, progress.total, unlockAchievement]);
 
   if (!week) {
     return (
@@ -32,7 +50,6 @@ export default function WeekPage() {
   }
 
   const phase = phases.find((p) => p.weeks.includes(id));
-  const progress = getWeekProgress(id);
   const color = phaseColors[week.phase];
   const prevWeek = id > 1 ? id - 1 : null;
   const nextWeek = id < 12 ? id + 1 : null;

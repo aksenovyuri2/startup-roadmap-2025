@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import AnimatedBackground from '../components/AnimatedBackground';
 import Sidebar from '../components/Sidebar';
 import MobileNav from '../components/MobileNav';
+import XPToast from '../components/XPToast';
+import LevelUpModal from '../components/LevelUpModal';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -32,6 +34,8 @@ export default function MainLayout() {
           </div>
         </main>
       </div>
+      <XPToast />
+      <LevelUpModal />
     </div>
   );
 }

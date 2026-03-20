@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { GameProvider } from './context/GameContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
@@ -16,6 +17,7 @@ import SummaryPage from './pages/SummaryPage';
 export default function App() {
   return (
     <AuthProvider>
+      <GameProvider>
       <BrowserRouter>
         <ProtectedRoute>
           <Routes>
@@ -34,6 +36,7 @@ export default function App() {
           </Routes>
         </ProtectedRoute>
       </BrowserRouter>
+      </GameProvider>
     </AuthProvider>
   );
 }
